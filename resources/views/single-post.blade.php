@@ -61,7 +61,7 @@
                 <i class="bi bi-tags"></i>
                 <ul class="cats">
                   @for($i=0; $i < count($postTags); $i++)
-                  <li><a href="{{ url('category/'.$postTags[$i]) }}">{{ $postTags[$i] }}</a></li>
+                  <li><a href="{{ url('tag/'.$postTags[$i]) }}">{{ $postTags[$i] }}</a></li>
                   @endfor
                 </ul>
 

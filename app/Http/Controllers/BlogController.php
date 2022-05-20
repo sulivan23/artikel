@@ -35,7 +35,7 @@ class BlogController extends Controller
         foreach($this->data->get() as $post){
             array_push($arrTags, $post->tags);
         }
-        $this->tags = str_replace(' ','',implode(',', $arrTags));
+        $this->tags = implode(',', $arrTags);
     }
 
     public function landingPage(Request $request)

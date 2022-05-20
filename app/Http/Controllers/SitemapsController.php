@@ -16,7 +16,7 @@ class SitemapsController extends Controller
             $tag = Sitemap::addTag(url($article->slug), $article->updated_at, 'daily', '0.8');
 
             foreach ($article->attachments as $image) {
-                $tag->addImage($image->attachment_url, $image->alt);
+                $tag->addImage(url('img/article/content/'.$image->attachment_url), $image->alt);
             }
         }
 

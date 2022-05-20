@@ -46,7 +46,8 @@ class UserController extends Controller
         $validate = Validator::make($request->all(),[
             'name'  => 'string|required',
             'role'  => 'required',
-            'email' => 'email|required'
+            'email' => 'email|required',
+            'jenkel'=> 'required'
         ]);
         if($validate->fails()){
             return redirect()
@@ -110,7 +111,7 @@ class UserController extends Controller
                 if($update == true){
                     $data = array(
                         'name'          => $request->name,
-                        'roles'         => $request->role,
+                        // 'roles'         => $request->role,
                         'email'         => $request->email,
                         'jenis_kelamin' => $request->jenkel,
                         'nickname'      => $request->nickname,

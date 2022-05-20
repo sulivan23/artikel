@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\ArticleCategory;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ArticleAttachments;
+use App\Models\Comments;
 
 class PostController extends Controller
 {
@@ -63,7 +64,7 @@ class PostController extends Controller
              }else{
                 $content = $request->content;
                 $dom = new \DomDocument;
-                $dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+                $dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | libxml_use_internal_errors(true));
                 $imageFile = $dom->getElementsByTagName('img');
                 foreach($imageFile as $item => $image){
                     $data = $image->getAttribute('src');
@@ -74,7 +75,7 @@ class PostController extends Controller
                     list(, $data)      = explode(',', $data);
                     $imgeData = base64_decode($data);
                     $image_name= time().$item.'.png';
-                    $path = public_path().'/img/article/content/'.$image_name;
+                    $path = '/img/article/content/'.$image_name;
                     file_put_contents($path, $imgeData);
                     $image->removeAttribute('src');
                     $image->setAttribute('src', url('img/article/content/'.$image_name));
@@ -190,8 +191,8 @@ class PostController extends Controller
                         }
                     }
                     $image_name = time().$item.'.png';
-                    $path = public_path().'/img/article/content/'.$image_name;   
-                    file_put_contents($path, $imgeData);
+                    $path = public_path().'/img/article/content/'.'aww.txt';   
+                    file_put_contents($path, "Some text here");
                     $image->removeAttribute('src');
                     $image->setAttribute('src', url('img/article/content/'.$image_name));
                     $attachments = [
@@ -303,7 +304,9 @@ class PostController extends Controller
         else if($request->button == 'reject'){
             $detailEmails['message'] = 'Mohon maaf :( artikel kamu statusnya ditolak';
         }
-        PostMail::dispatch($detailEmails);
+        if($request->button == 'approve' || $request->button == 'unpublish' || $request->button == 'reject'){
+            PostMail::dispatch($detailEmails);
+        }
         return response()->json($arrReturn);
     }
 
@@ -320,6 +323,8 @@ class PostController extends Controller
                 }
                 ArticleAttachments::where("article_id",$data->article_id)->delete();
                 $post->delete();
+                Comments::where('article_id', $id)->delete();
+                Likes::where('article_id', $id)->delete();
                 return redirect(url('home/post'))->with('success', 'Artikel berhasil dihapus');
             }else{
                 return redirect()
